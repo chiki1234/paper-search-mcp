@@ -17,6 +17,7 @@ from urllib.parse import unquote
 
 import httpx
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 from .academic_platforms.arxiv import ArxivSearcher
 from .academic_platforms.base_search import BASESearcher
@@ -44,6 +45,10 @@ from .config import get_env, load_env_file
 
 # Initialize MCP server
 mcp = FastMCP("paper_search_server")
+# Railway 前面有反向代理，关闭 FastMCP 自己的 Host 校验
+mcp.settings.transport_security = TransportSecuritySettings(
+    enable_dns_rebinding_protection=False
+)
 logger = logging.getLogger(__name__)
 GOOGLE_SCHOLAR_TOOL_TIMEOUT_SECONDS = 20.0
 SEARCH_PAPERS_SOURCE_TIMEOUT_SECONDS = 45.0
